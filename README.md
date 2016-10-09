@@ -19,6 +19,10 @@ Doing it type-safe would be quite hard in C without pre-processing which I would
 
 * Try implement an API that works for dear imgui and Qt. These APIs are quite different so should be interesting to get a common base.
 
+## Why not use imgui style of programming?
+
+While I really like the way imgui style programming works it's hard (if not close to impossible) to do with existing libraries (like Qt) while it's much possible to do it the other way around. So I deceded to try to go for a basic signal model and see how well it works. This is still an experiment and may actually not work out but time will tell.
+
 ## Non-goals
 
 * Having diffrent UI backends to behave exactly the same will likely be very hard. Wrui will make a best effort in doing so but there will likely be areas where something can't be supported in one or another simply because how that library is implemented. The plan here is to provide documenation that states this and with run-time warnings as well.
