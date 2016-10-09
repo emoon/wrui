@@ -7,6 +7,7 @@ Wrui is a wrapper for UI libraries (like Qt, wxWidgets, dear imgui) with a commo
 * Wrui will only expose one single symbol which is a table of function pointers. There are several upsides to this:
 	* Shared libraries doesn't need to hard-link with a Wrui shared library. It only needs to be sent one single pointer.
 	* Possible for a main application to update with bug fixes without affecting plugins.
+	* All code wrapping a certain library can be within one shared library. That makes linking of the main application (for langs that uses static linking) much faster as the library can be loaded in run-time instead of linked with.
 	* More clear separation
 * Having a common API but the possibility of using diffrent backends make it possible to integrate a UI into another application. Say that you have a game that use OpenGL and know how to use Wrui. Then it should be possible to use dear imgui (example) backend + Wrui inside that application.
 
