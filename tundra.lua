@@ -3,6 +3,7 @@ local native = require('tundra.native')
 
 local win64 = {
     Env = {
+		QT5 = native.getenv("QT5_WIN32", ""),
         GENERATE_PDB = "1",
         CCOPTS = {
             "/FS", "/W4", "/WX", "/I.",
@@ -27,12 +28,17 @@ local win64 = {
 
 local macosx = {
     Env = {
+    	-- TODO: Query this from qmake
+    	QT5="/Users/danielcollin/code/other/Qt/5.7/clang_64";
         CCOPTS = {
             "-Weverything", "-I.", "-Werror",
             { "-O0", "-g"; Config = "*-*-debug" },
             { "-O3"; Config = "*-*-release" },
         },
+        CXXOPTS = {
+            "-std=c++11", -- "-Weverything", "-I.", "-Werror"
         },
+    },
     Frameworks = { "Cocoa" },
 }
 

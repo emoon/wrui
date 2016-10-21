@@ -79,6 +79,26 @@ StaticLibrary {
 }
 
 
+StaticLibrary {
+	Name = "wrui_qt",
+
+	Env = {
+	    CPPPATH = {
+		    { "$(QT5)/lib/QtWidgets.framework/Headers"; Config = "macosx-*-*" },
+        },
+
+		CXXOPTS = { 
+		    { "-F$(QT5)/lib"; Config = "macosx-*-*" },
+		},
+
+	    FRAMEWORKS = { "$(QT5)/lib/QtCore", "$(QT5)/lib/QtWidgets" },
+	},
+
+	Sources = {
+		get_src("src/qt")
+	},
+}
+
 
 Program {
 	Name = "button_dear_imgui",
@@ -89,5 +109,23 @@ Program {
 	Libs = { { "stdc++"; Config = { "linux-*-*", "mac*-*-*" }, }, },
 }
 
-Default "button_dear_imgui"
+Program {
+	Name = "button_qt",
+
+	Env = {
+        PROGCOM = { 
+            { "-F$(QT5)/lib", "-lstdc++", "-rpath tundra-output$(SEP)macosx-clang-debug-default"; Config = "macosx-clang-*" },
+        },
+    },
+
+	Sources = { "examples/button.c" },
+
+	Depends = { "wrui_qt" },
+	Frameworks = { "Cocoa", "QtCore", "QtWidgets", "QtGui" },
+	Libs = { { "stdc++"; Config = { "linux-*-*", "mac*-*-*" }, }, },
+}
+
+
+-- Default "button_dear_imgui"
+Default "button_qt"
 
