@@ -17,6 +17,36 @@ local function get_src(dir, recursive)
     }
 end
 
+-- Used to generate the moc cpp files as needed for .h that uses Q_OBJECT for QtTool(s)
+
+DefRule {
+	Name = "MocGeneration",
+	Pass = "CodeGeneration",
+	Command = "$(QT5)/bin/moc $(<) -o $(@)",
+
+	Blueprint = {
+		Source = { Required = true, Type = "string", Help = "Input filename", },
+		OutName = { Required = true, Type = "string", Help = "Output filename", },
+	},
+
+	Setup = function (env, data)
+		return {
+			InputFiles    = { data.Source },
+			OutputFiles   = { "$(OBJECTDIR)/_generated/" .. data.OutName },
+		}
+	end,
+}
+
+-- Used to send a list of header files 
+
+local function MocGenerationMulti(sources)
+ local result = {}
+ for _, src in ipairs(tundra.util.flatten(sources)) do
+   result[#result + 1] = MocGeneration { Source = src, OutName = tundra.path.get_filename_base(src) .. "_moc.cpp" }
+ end
+ return result
+end
+
 StaticLibrary {
     Name = "glfw",
 
@@ -84,7 +114,8 @@ StaticLibrary {
 
     Env = {
         CPPPATH = {
-            { "$(QT5)/lib/QtWidgets.framework/Headers"; Config = "macosx-*-*" },
+            { "$(QT5)/lib/QtWidgets.framework/Headers",
+              "$(QT5)/lib/QtCore.framework/Headers"; Config = "macosx-*-*" },
         },
 
         CXXOPTS = {
@@ -95,6 +126,13 @@ StaticLibrary {
     },
 
     Sources = {
+		MocGenerationMulti {
+			Glob { 
+				Dir = "src/qt",
+				Extensions = { ".h" } 
+			}, 
+		},
+
         get_src("src/qt")
     },
 }

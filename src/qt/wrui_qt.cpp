@@ -1,4 +1,5 @@
 #include "../../include/wrui.h"
+#include "signal_wrappers.h"
 #include <QApplication>
 #include <QPushButton>
 

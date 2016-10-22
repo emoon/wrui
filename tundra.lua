@@ -53,6 +53,10 @@ local linux = {
 }
 
 Build {
+	Passes = {
+		CodeGeneration = { Name="Generate sources", BuildOrder = 1 },
+	},
+
     Configs = {
         Config { Name = "macosx-clang", DefaultOnHost = "macosx", Inherit = macosx, Tools = { "clang-osx" } },
         Config { Name = "win64-msvc", DefaultOnHost = { "windows" }, Inherit = win64, Tools = { "msvc",  } },
