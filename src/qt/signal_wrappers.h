@@ -2,6 +2,8 @@
 
 #include <QObject>
 
+typedef void (*SignalNoArgs)(void* data);
+
 class QSignalWrapperNoArgs : public QObject {
 	Q_OBJECT
 signals:
@@ -11,7 +13,7 @@ signals:
 class QSlotWrapperNoArgs : public QObject {
 	Q_OBJECT
 public:
-	QSlotWrapperNoArgs(void (*func)(void*), void* data) {
+	QSlotWrapperNoArgs(void* data, SignalNoArgs func) {
         m_func = func;
         m_data = data;
     }
@@ -21,7 +23,7 @@ public slots:
     }
 
 private:
-	void (*m_func)(void*);
+	SignalNoArgs m_func;
 	void* m_data;
 };
 

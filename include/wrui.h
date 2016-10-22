@@ -52,7 +52,7 @@ typedef struct Wrui {
 
 // Connection API
 
-#define gu_connect(widget, id, data, func) widget->base->o->connect(widget->base->o, id, data, func)
+#define gu_connect(widget, id, data, func) widget->base->o->connect(widget->base->o, id, data, (void*)func)
 
 // Application
 

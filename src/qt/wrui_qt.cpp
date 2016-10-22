@@ -23,6 +23,17 @@ static GUApplication* application_create() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+static int connect(void* sender, const char* id, void* reciver, void* func) {
+	GUObject* object = (GUObject*)sender;
+	QObject* q_obj = (QObject*)object->p;
+	printf("sender %p\n", q_obj);
+	QSlotWrapperNoArgs* wrap = new QSlotWrapperNoArgs(reciver, (SignalNoArgs)func);
+	QObject::connect(q_obj, "2released()", wrap, SLOT(method()));
+	return 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 static GUPushButton* push_button_create(const char* label) {
 	QPushButton* qt_button = new QPushButton(label, 0);
 
@@ -35,7 +46,11 @@ static GUPushButton* push_button_create(const char* label) {
 	button->base = new GUWidget;
 	button->base->o = new GUObject;
 
-	button->base->o->p = (void*) qt_button; 
+	button->base->o->p = (void*) static_cast<QObject*>(qt_button); 
+
+	printf("qobj %p\n", button->base->o->p);
+
+	button->base->o->connect = connect;
 
 	return button;
 }
