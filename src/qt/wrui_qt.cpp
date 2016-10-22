@@ -26,7 +26,7 @@ static GUApplication* application_create() {
 static int connect(void* sender, const char* id, void* reciver, void* func) {
 	GUObject* object = (GUObject*)sender;
 	QObject* q_obj = (QObject*)object->p;
-	printf("sender %p\n", q_obj);
+	printf("reciver %p - func %p\n", reciver, func);
 	QSlotWrapperNoArgs* wrap = new QSlotWrapperNoArgs(reciver, (SignalNoArgs)func);
 	QObject::connect(q_obj, "2released()", wrap, SLOT(method()));
 	return 0;
