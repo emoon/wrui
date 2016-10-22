@@ -37,9 +37,8 @@ typedef struct GUApplication {
 typedef struct Wrui {
 	GUApplication* (*application_create)();
 	GUIWindow* (*window_create)();
-	GUPushButton* (*push_button_create)();
+	GUPushButton* (*push_button_create)(const char* label);
 } Wrui;
-
 
 // Windowing
 
@@ -49,7 +48,7 @@ typedef struct Wrui {
 
 #define gu_set_size(widget, x, y) widget->base->set_size(widget->base, x, y)
 #define gu_set_parent(widget, parent) widget->base->set_parent(widget->base, widget->base)
-#define gu_create_push_button(funcs) funcs->create_push_button
+#define gu_push_button_crate(funcs, label) funcs->push_button_create(label)
 
 // Connection API
 
