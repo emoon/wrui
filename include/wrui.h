@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#define GU_EVENT_CLICKED "clicked"
+#define GU_EVENT_RELEASED "2released()"
 
 typedef struct GUObject {
 	// private data
@@ -16,7 +16,6 @@ typedef struct GUObject {
 typedef struct GUWidget {
 	GUObject* o;
 	void (*set_size)(struct GUWidget* widget, int width, int height);
-	void (*set_parent)(struct GUWidget* widget, int width, int height);
 } GUWidget;
 
 typedef struct GUWindow {

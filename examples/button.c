@@ -24,7 +24,9 @@ int main() {
 	GUPushButton* button = gu_push_button_crate(ui, "Foo");
 	(void)button;
 
-	gu_connect(button, "clicked", &test, on_clicked);
+	gu_set_size(button, 100, 100);
+
+	gu_connect(button, GU_EVENT_RELEASED, &test, on_clicked);
 
 	gu_application_run(app);
 
