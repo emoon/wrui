@@ -22,7 +22,6 @@ int main() {
 	GUApplication* app = gu_application_crate(ui);
 
 	GUPushButton* button = gu_push_button_crate(ui, "Foo");
-	(void)button;
 
 	gu_set_size(button, 100, 100);
 
