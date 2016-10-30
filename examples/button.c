@@ -17,13 +17,13 @@ int main() {
 
 	test.dummy = 0x12;
 
-	Wrui* ui = wrui_get();
+	GUApplication* app = gu_application_crate();
 
-	GUApplication* app = gu_application_crate(ui);
-
-	GUPushButton* button = gu_push_button_crate(ui, "Foo");
+	GUPushButton* button = gu_push_button_create("Foo");
 
 	gu_set_size(button, 100, 100);
+
+	//button->base.funcs->set_size(&button->base, x, y);
 
 	gu_connect(button, GU_EVENT_RELEASED, &test, on_clicked);
 
