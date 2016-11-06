@@ -11,37 +11,72 @@ struct GUPushButton;
 
 #define GU_EVENT_RELEASED "2released()"
 
+#define GU_INTERNAL_WIDGET_TYPE(type) \
+typedef struct type { \
+	GUWidget* base; \
+} type
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef enum GUDockingArea {
+    GUDockingArea_Left = 0x1,
+    GUDockingArea_Right = 0x2,
+    GUDockingArea_Top = 0x4,
+    GUDockingArea_Bottonm = 0x8,
+    GUDockingArea_All = 0xf,
+    GUDockingArea_None = 0,
+} GUDockingArea;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 typedef struct GUObjectFuncs {
 	int (*connect)(void* sender, const char* id, void* reciver, void* func);
 } GUObjectFuncs;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct GUWidgetFuncs {
 	void (*set_size)(struct GUWidget* widget, int width, int height);
 } GUWidgetFuncs;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct GUMainWindowFuncs {
+	void (*add_dock_widget)(GUDockingArea area, struct GUWidget* widget);
+} GUMainWindowFuncs;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 typedef struct GUPushButtonFuncs {
 	void (*set_default)(struct GUPushButton* button, int state);
 } GUPushButtonFuncs;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct GUApplicationFuncs {
 	int (*run)(void* p);
 } GUApplicationFuncs;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 typedef struct GUObject {
 	void* p;
 } GUObject;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct GUWidget {
 	GUObject* object;
 } GUWidget;
 
-typedef struct GUWindow {
-	GUWidget* base;
-} GUIWindow;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUPushButton {
-	GUWidget* base;
-} GUPushButton;
+GU_INTERNAL_WIDGET_TYPE(GUWindow);
+GU_INTERNAL_WIDGET_TYPE(GUPushButton);
+GU_INTERNAL_WIDGET_TYPE(GUDockWidget);
+GU_INTERNAL_WIDGET_TYPE(GUMainWindow);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct GUApplication {
 	void* p; // private data
@@ -51,21 +86,25 @@ typedef struct Wrui {
 	uint64_t api_version;
 
 	GUApplication* (*application_create)();
-	GUIWindow* (*window_create)();
-	GUPushButton* (*push_button_create)(const char* label);
+	GUWindow* (*window_create)(GUWidget* parent);
+	GUPushButton* (*push_button_create)(const char* label, GUWidget* parent);
 
 	GUObjectFuncs* object_funcs;
 	GUWidgetFuncs* widget_funcs;
+	GUMainWindowFuncs* main_window_funcs;
 	GUPushButtonFuncs* push_button_funcs;
 	GUApplicationFuncs* application_funcs;
 
 } Wrui;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #define WRUI_VERSION(major, minor, sub) ((((uint64_t)major) << 32) | (minor << 16) | (sub))
 
 // Windowing
 
-#define gu_window_create(funcs) wrui_get()->create_window()
+#define gu_ctx_window_create(ctx) ctx->create_window()
+#define gu_window_create() gu_ctx_window_create(wrui_get())
 
 // Generic window stuff
 
@@ -73,7 +112,7 @@ typedef struct Wrui {
 
 #define gu_set_size(widget, x, y) wrui_get()->widget_funcs->set_size(widget->base, x, y)
 #define gu_set_parent(widget, parent) widget->base->set_parent(widget->base, widget->base)
-#define gu_push_button_create(label) wrui_get()->push_button_create(label)
+#define gu_push_button_create(label, parent) wrui_get()->push_button_create(label, parent)
 
 // Connection API
 

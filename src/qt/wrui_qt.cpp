@@ -81,13 +81,14 @@ static GUApplication* application_create() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static GUPushButton* push_button_create(const char* label) {
+static GUPushButton* push_button_create(const char* label, GUWidget* parent) {
+    (void)parent;
 	QPushButton* qt_button = new QPushButton(label, 0);
 	qt_button->show();
 
 	// TODO: Smarter allocator than just using new all the time
 
-	GUPushButton* button = new GUPushButton; 
+	GUPushButton* button = new GUPushButton;
 
 	button->base = new GUWidget;
 
@@ -106,13 +107,13 @@ static Wrui s_wrui = {
 	application_create,
 	0,
 	push_button_create,
-	
+
 	// funcs
 
 	&s_objFuncs,
 	&s_widgetFuncs,
 	0,
-	&s_appFuncs 
+	&s_appFuncs
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
