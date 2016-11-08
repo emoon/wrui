@@ -1,21 +1,23 @@
+#include "../../include/wrui.h"
+#include "../../include/dock_widget.h"
 #include <QDockWidget>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static struct GUDockWidget* create(struct GUWidget* parent) {
-	QDockingWidget qdock = nullptr;
+	QDockWidget* qdock = nullptr;
 
-	if (parent) 
-		qdock = QTDockWidget((QWidget*)parent->base->p);
+	if (parent)
+		qdock = new QDockWidget((QWidget*)parent->object->p);
 	else
-		qdock = QTDockWidget(nullptr);
-		
+		qdock = new QDockWidget(nullptr);
+
 	GUDockWidget* t = new GUDockWidget;
 	t->priv = 0;
 
-	widget_setup(t->base, (void*) qdock); 
+	//widget_setup(t->base, (void*) qdock);
 
-	return t; 
+	return t;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,20 +31,20 @@ static struct GUDockWidget* create_title(const char* name, struct GUWidget* pare
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static bool is_floating(GUDockWidget* w) {
-	return ((QDockWidget*)w->base->p)->isFloating();
+	return ((QDockWidget*)w->base->object->p)->isFloating();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static void set_floating(GUDockWidget* w, bool state) {
-	((QDockWidget*)w->base->p)->setFloating(state);
+	((QDockWidget*)w->base->object->p)->setFloating(state);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static void set_widget(GUDockWidget* dock, GUWidget* widget)
+static void set_widget(GUDockWidget* dock, GUWidget* widget) {
 	dock->priv = (void*)widget;
-	((QDockWidget*)w->base->p)->setWidget((QWidget*)widget->base->p);
+	((QDockWidget*)dock->base->object->p)->setWidget((QWidget*)widget->object->p);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

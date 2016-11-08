@@ -98,6 +98,7 @@ static GUPushButton* push_button_create(const char* label, GUWidget* parent) {
 }
 
 extern GUDockWidgetFuncs g_dockWidgetFuncs;
+extern GUMainWindowFuncs g_mainWindowFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -114,6 +115,7 @@ static Wrui s_wrui = {
 
 	&s_objFuncs,
 	&s_widgetFuncs,
+	&g_mainWindowFuncs,
 	0,
 	&s_appFuncs
 };

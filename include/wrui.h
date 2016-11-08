@@ -6,8 +6,12 @@
 extern "C" {
 #endif
 
+#include "dock_widget.h"
+
 struct GUWidget;
 struct GUPushButton;
+struct GUMainWindow;
+struct GUDockWidget;
 
 #define GU_EVENT_RELEASED "2released()"
 
@@ -42,7 +46,7 @@ typedef struct GUWidgetFuncs {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct GUMainWindowFuncs {
-	void (*add_dock_widget)(GUMainWindow* win, GUDockingArea area, struct GUDockWidget* widget);
+	void (*add_dock_widget)(struct GUMainWindow* win, GUDockingArea area, struct GUDockWidget* widget);
 } GUMainWindowFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
