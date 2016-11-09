@@ -1,5 +1,6 @@
 #include "../../include/wrui.h"
 #include "../../include/dock_widget.h"
+#include "widget_private.h"
 #include <QDockWidget>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -15,7 +16,7 @@ static struct GUDockWidget* create(struct GUWidget* parent) {
 	GUDockWidget* t = new GUDockWidget;
 	t->priv = 0;
 
-	//widget_setup(t->base, (void*) qdock);
+	widget_setup(t->base, (void*) qdock);
 
 	return t;
 }
