@@ -72,9 +72,8 @@ typedef struct WUFont {
 
 typedef struct WUPainter {
 	WUFont* (*create_font)();
-
-	void (*draw_text)(const char* text, int len, WUFont* font);
-	void (*draw_rect)(WURect rect, WUColor color);
+	void (*draw_text)(WUPainter* painter, WUPos pos, const char* text, int len, const WUFont* font);
+	void (*draw_rect)(WUPainter* painter, WURect rect, WUColor color);
 
 } WUPainter;
 
