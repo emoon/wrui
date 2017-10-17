@@ -6,104 +6,71 @@
 extern "C" {
 #endif
 
-#include "dock_widget.h"
+struct WUWidget;
+struct WUPushButton;
+struct WUDockWidget;
 
-struct GUWidget;
-struct GUPushButton;
-struct GUMainWindow;
-struct GUDockWidget;
-
-#define GU_EVENT_RELEASED "2released()"
-
-#define GU_INTERNAL_WIDGET_TYPE(type) \
-typedef struct type { \
-	GUWidget* base; \
-} type
+typedef void* WUInternalHandle;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef enum GUDockingArea {
-    GUDockingArea_Left = 0x1,
-    GUDockingArea_Right = 0x2,
-    GUDockingArea_Top = 0x4,
-    GUDockingArea_Bottom = 0x8,
-    GUDockingArea_All = 0xf,
-    GUDockingArea_None = 0,
-} GUDockingArea;
+typedef struct WUWidgetFuncs {
+	void (*set_size)(WUInternalHandle widget, int width, int height);
+} WUWidgetFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUObjectFuncs {
-	int (*connect)(void* sender, const char* id, void* reciver, void* func);
-} GUObjectFuncs;
+typedef struct WUPushButtonFuncs {
+	void (*set_default)(struct WUPushButton* button, int state);
+} WUPushButtonFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUWidgetFuncs {
-	void (*set_size)(struct GUWidget* widget, int width, int height);
-} GUWidgetFuncs;
+typedef struct WUApplicationFuncs {
+	int (*run)(WUInternalHandle p);
+} WUApplicationFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUMainWindowFuncs {
-	void (*add_dock_widget)(struct GUMainWindow* win, GUDockingArea area, struct GUDockWidget* widget);
-} GUMainWindowFuncs;
+typedef struct WUWidget {
+	WUInternalHandle handle;
+} WUWidget;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUPushButtonFuncs {
-	void (*set_default)(struct GUPushButton* button, int state);
-} GUPushButtonFuncs;
+typedef struct WUApplication {
+	WUInternalHandle handle;
+} WUApplication;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUApplicationFuncs {
-	int (*run)(void* p);
-} GUApplicationFuncs;
+typedef struct WUFont {
+	int (*set_size)(WUFont* font, int size);
+	int (*set_font_from_memory)(WUFont* font, void data, int size);
+	int (*set_font_from_filename)(WUFont* font, const char* filename, int len);
+} WUFont;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUObject {
-	void* p;
-} GUObject;
+typedef struct WUPainter {
+	WUFont* (*create_font)();
+
+} WUPainter;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct GUWidget {
-	GUObject* object;
-} GUWidget;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct GUDockWidget {
-	GUWidget* base;
-	void* priv;
-} GUDockWidget;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-GU_INTERNAL_WIDGET_TYPE(GUWindow);
-GU_INTERNAL_WIDGET_TYPE(GUPushButton);
-GU_INTERNAL_WIDGET_TYPE(GUMainWindow);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct GUApplication {
-	void* p; // private data
-} GUApplication;
 
 typedef struct Wrui {
 	uint64_t api_version;
 
-	GUApplication* (*application_create)();
-	GUWindow* (*window_create)(GUWidget* parent);
-	GUPushButton* (*push_button_create)(const char* label, GUWidget* parent);
+	WUApplication* (*application_create)();
+	WUWindow* (*window_create)(WUInternalHandle parent);
+	WUPushButton* (*push_button_create)(const char* label, WUInternalHandle parent);
 
-	GUObjectFuncs* object_funcs;
-	GUWidgetFuncs* widget_funcs;
-	GUMainWindowFuncs* main_window_funcs;
-	GUPushButtonFuncs* push_button_funcs;
-	GUApplicationFuncs* application_funcs;
+	WUObjectFuncs* object_funcs;
+	WUWidgetFuncs* widget_funcs;
+	WUMainWindowFuncs* main_window_funcs;
+	WUPushButtonFuncs* push_button_funcs;
+	WUApplicationFuncs* application_funcs;
 
 } Wrui;
 
