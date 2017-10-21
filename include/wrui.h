@@ -6,12 +6,21 @@
 extern "C" {
 #endif
 
-struct WUWidget;
-struct WUPushButton;
-struct WUDockWidget;
+//struct WUWidget;
+//struct WUPushButton;
+//struct WUDockWidget;
+
+struct WUWindow;
 
 typedef void* WUInternalHandle;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct WUApplication {
+	WUInternalHandle handle;
+} WUApplication;
+
+/*
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct WUWidgetFuncs {
@@ -26,21 +35,16 @@ typedef struct WUPushButtonFuncs {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct WUApplicationFuncs {
-	int (*run)(WUInternalHandle p);
-} WUApplicationFuncs;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 typedef struct WUWidget {
 	WUInternalHandle handle;
 } WUWidget;
+*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct WUApplication {
-	WUInternalHandle handle;
-} WUApplication;
+typedef struct WUApplicationFuncs {
+	int (*run)(WUApplication* p);
+} WUApplicationFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -63,9 +67,9 @@ typedef struct WUColor {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct WUFont {
-	int (*set_size)(WUFont* font, int size);
-	int (*set_font_from_memory)(WUFont* font, void data, int size);
-	int (*set_font_from_filename)(WUFont* font, const char* filename, int len);
+	int (*set_size)(struct WUFont* font, int size);
+	//void (*set_font_from_memory)(struct WUFont* font, void data, int size);
+	int (*set_font_from_filename)(struct WUFont* font, const char* filename, int len);
 } WUFont;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,41 +88,26 @@ typedef struct Wrui {
 
 	WUApplication* (*application_create)();
 	WUWindow* (*window_create)(WUInternalHandle parent);
-	WUPushButton* (*push_button_create)(const char* label, WUInternalHandle parent);
+	//WUPushButton* (*push_button_create)(const char* label, WUInternalHandle parent);
 
-	WUObjectFuncs* object_funcs;
-	WUWidgetFuncs* widget_funcs;
-	WUMainWindowFuncs* main_window_funcs;
-	WUPushButtonFuncs* push_button_funcs;
+	//WUObjectFuncs* object_funcs;
+	//WUWidgetFuncs* widget_funcs;
+	//WUMainWindowFuncs* main_window_funcs;
+	//UPushButtonFuncs* push_button_funcs;
 	WUApplicationFuncs* application_funcs;
 
 } Wrui;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define WRUI_VERSION(major, minor, sub) ((((uint64_t)major) << 32) | (minor << 16) | (sub))
+#define WRUI_VERSION_CREATE(major, minor, sub) ((((uint64_t)major) << 32) | (minor << 16) | (sub))
+#define WRUI_VERSION WRUI_VERSION_CREATE(0, 0, 1)
 
-// Windowing
-
-#define gu_ctx_window_create(ctx) ctx->create_window()
-#define gu_window_create() gu_ctx_window_create(wrui_get())
-
-// Generic window stuff
-
-// #define gu_ctx_set_size(widget, x, y) wrui_get()->widget_funcs->set_size(widget->base, x, y)
-
-#define gu_set_size(widget, x, y) wrui_get()->widget_funcs->set_size(widget->base, x, y)
-#define gu_set_parent(widget, parent) widget->base->set_parent(widget->base, widget->base)
-#define gu_push_button_create(label, parent) wrui_get()->push_button_create(label, parent)
-
-// Connection API
-
-#define gu_connect(widget, id, data, func) wrui_get()->object_funcs->connect(widget->base->object, id, data, (void*)func)
-
-// Application
-
-#define gu_application_crate() wrui_get()->application_create()
-#define gu_application_run(app) wrui_get()->application_funcs->run(app)
+#ifdef _WIN32
+#define WRUI_EXPORT __declspec(dllexport)
+#else
+#define WRUI_EXPORT 
+#endif
 
 // Should be the only exported symbol
 
