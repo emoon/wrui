@@ -142,8 +142,6 @@ StaticLibrary {
         get_src("src/qt")
     },
 }
-
-
 Program {
     Name = "button_dear_imgui",
     Sources = { "examples/button.c" },
@@ -170,7 +168,13 @@ Program {
 }
 --]]
 
+Program {
+    Name = "basic",
+    Sources = { "examples/basic.c" },
+}
+
 Default "wrui_dimgui"
+Default "basic"
 
 -- Default "button_dear_imgui"
 --Default "button_qt"

@@ -74,20 +74,22 @@ typedef struct WUFont {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
 typedef struct WUPainter {
-	WUFont* (*create_font)();
-	void (*draw_text)(WUPainter* painter, WUPos pos, const char* text, int len, const WUFont* font);
-	void (*draw_rect)(WUPainter* painter, WURect rect, WUColor color);
+	//WUFont* (*create_font)();
+	//void (*draw_text)(WUPainter* painter, WUPos pos, const char* text, int len, const WUFont* font);
+	//void (*draw_rect)(WUPainter* painter, WURect rect, WUColor color);
 
 } WUPainter;
+*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct Wrui {
 	uint64_t api_version;
 
-	WUApplication* (*application_create)();
-	WUWindow* (*window_create)(WUInternalHandle parent);
+	WUApplication* (*application_create)(void);
+	struct WUWindow* (*window_create)(WUInternalHandle parent);
 	//WUPushButton* (*push_button_create)(const char* label, WUInternalHandle parent);
 
 	//WUObjectFuncs* object_funcs;
@@ -111,7 +113,7 @@ typedef struct Wrui {
 
 // Should be the only exported symbol
 
-extern Wrui* wrui_get();
+extern Wrui* wrui_get(void);
 
 #ifdef __cplusplus
 }
