@@ -151,7 +151,7 @@ static int app_run(WUApplication* app) {
 		ImGui_ImplGlfwGL2_NewFrame();
 
 		if (win->paint_event) {
-			win->paint_event(wrui_get(), win->paint_user_data); 
+			win->paint_event(win->paint_user_data); 
 		}
 
         // Rendering

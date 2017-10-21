@@ -10,16 +10,17 @@ typedef Wrui* (*Get_wrui)(void);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct Application {
+typedef struct Application {
 	WUFont* font;
-};
+	Wrui* wrui;
+} Application;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static void paint_event(Wrui* wrui, void* user_data) {
-	(void)user_data;
+static void paint_event(void* user_data) {
+	Application* app = (Application*)user_data;
 
-	WUPainter* painter = wrui->painter_get();
+	WUPainter* painter = app->wrui->painter_get();
 	
 	WUPos pos = { 10.0f, 10.0f }; 
 
@@ -56,10 +57,13 @@ int main() {
 
     Wrui* wrui = get_wrui();
 
+    Application* user_app = malloc(sizeof(Application));
+    user_app->wrui = wrui;
+
     WUApplication* app = wrui->application_create();
     struct WUWindow* window = wrui->window_create(0);
 
-    wrui->window_funcs->set_paint_event(window, 0, paint_event); 
+    wrui->window_funcs->set_paint_event(window, user_app, paint_event); 
 
 	return wrui->application_funcs->run(app);
 }
