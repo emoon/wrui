@@ -15,8 +15,12 @@
 #include "imgui_impl_glfw.h"
 
 struct WUWindow {
-	GLFWwindow* glfw_window;
+	GLFWwindow* glfw_window = nullptr;
+	PaintEvent paint_event = nullptr;
+	void* paint_user_data;
 };
+
+extern "C" WRUI_EXPORT Wrui* wrui_get();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,6 +58,49 @@ static WUApplication* application_create() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+static WUFont* create_font() {
+	return nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static void draw_text(struct WUPainter* painter, WUPos pos, WUColor color, const char* text, int len, const WUFont* font) {
+	(void)font;
+
+	ImVec2 p = { pos.x, pos.y };
+	ImVec4 col = { color.r, color.g, color.b, color.a };
+
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+	draw_list->AddText(p, ImGui::GetColorU32(col), text, text + len);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static void draw_rect(struct WUPainter* painter, WURect rect, WUColor color) {
+	ImVec2 a = { rect.x, rect.y };
+	ImVec2 b = { rect.width, rect.height };
+	ImVec4 col = { color.r, color.g, color.b, color.a };
+
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+	draw_list->AddRectFilled(a, b, ImGui::GetColorU32(col));
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static WUPainter s_painter {
+	create_font,
+	draw_text,
+	draw_rect,
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static WUPainter* painter_get(void) {
+	return &s_painter; 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 static WUWindow* window_create(WUInternalHandle parent) {
     GLFWwindow* glfw_window = glfwCreateWindow(1280, 720, "wrui window", NULL, NULL);
     glfwMakeContextCurrent(glfw_window);
@@ -69,6 +116,19 @@ static WUWindow* window_create(WUInternalHandle parent) {
 
 	return window;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+static void window_set_paint_event(struct WUWindow* window, void* user_data, PaintEvent event) {
+	window->paint_event = event;
+	window->paint_user_data = user_data;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static WUWindowFuncs window_funcs = {
+	window_set_paint_event,
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -90,6 +150,10 @@ static int app_run(WUApplication* app) {
 		glfwPollEvents();
 		ImGui_ImplGlfwGL2_NewFrame();
 
+		if (win->paint_event) {
+			win->paint_event(wrui_get(), win->paint_user_data); 
+		}
+
         // Rendering
         int display_w, display_h;
         glfwGetFramebufferSize(win->glfw_window, &display_w, &display_h);
@@ -106,7 +170,7 @@ static int app_run(WUApplication* app) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static WUApplicationFuncs s_app_funcs = {
+static WUApplicationFuncs app_funcs = {
 	app_run,
 };
 
@@ -117,7 +181,11 @@ static Wrui s_wrui = {
 
 	application_create,
 	window_create,
-	&s_app_funcs,
+	painter_get,
+	
+
+	&window_funcs,
+	&app_funcs,
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

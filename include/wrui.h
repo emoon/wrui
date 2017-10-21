@@ -11,8 +11,8 @@ extern "C" {
 //struct WUDockWidget;
 
 struct WUWindow;
-
 typedef void* WUInternalHandle;
+struct Wrui;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,22 +66,29 @@ typedef struct WUColor {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+typedef void (*PaintEvent)(struct Wrui* wrui, void* user_data); 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 typedef struct WUFont {
 	int (*set_size)(struct WUFont* font, int size);
-	//void (*set_font_from_memory)(struct WUFont* font, void data, int size);
+	int (*set_font_from_memory)(struct WUFont* font, void* data, int size);
 	int (*set_font_from_filename)(struct WUFont* font, const char* filename, int len);
 } WUFont;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*
 typedef struct WUPainter {
-	//WUFont* (*create_font)();
-	//void (*draw_text)(WUPainter* painter, WUPos pos, const char* text, int len, const WUFont* font);
-	//void (*draw_rect)(WUPainter* painter, WURect rect, WUColor color);
-
+	WUFont* (*create_font)(void);
+	void (*draw_text)(struct WUPainter* painter, WUPos pos, WUColor color, const char* text, int len, const WUFont* font);
+	void (*draw_rect)(struct WUPainter* painter, WURect rect, WUColor color);
 } WUPainter;
-*/
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct WUWindowFuncs {
+	void (*set_paint_event)(struct WUWindow* window, void* user_data, PaintEvent event); 
+} WUWindowFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -90,12 +97,16 @@ typedef struct Wrui {
 
 	WUApplication* (*application_create)(void);
 	struct WUWindow* (*window_create)(WUInternalHandle parent);
+	WUPainter* (*painter_get)(void);
+
 	//WUPushButton* (*push_button_create)(const char* label, WUInternalHandle parent);
 
 	//WUObjectFuncs* object_funcs;
 	//WUWidgetFuncs* widget_funcs;
 	//WUMainWindowFuncs* main_window_funcs;
-	//UPushButtonFuncs* push_button_funcs;
+	//WUPushButtonFuncs* push_button_funcs;
+
+	WUWindowFuncs* window_funcs;
 	WUApplicationFuncs* application_funcs;
 
 } Wrui;

@@ -4,8 +4,37 @@
 #include <dlfcn.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
     
 typedef Wrui* (*Get_wrui)(void);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct Application {
+	WUFont* font;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static void paint_event(Wrui* wrui, void* user_data) {
+	(void)user_data;
+
+	WUPainter* painter = wrui->painter_get();
+	
+	WUPos pos = { 10.0f, 10.0f }; 
+
+	//WURect rect = { 10.0f, 10.0f, 200.0f, 200.0f }; 
+	WUColor color = { 1.0f, 1.0f, 0.0f, 1.0f };
+
+	//painter->draw_rect(painter, rect, color);
+	//painter->draw_rect(painter, rect, color);
+
+	const char* text = "test text";
+
+	painter->draw_text(painter, pos, color, text, (int)strlen(text), 0); 
+
+	printf("update\n");
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +57,9 @@ int main() {
     Wrui* wrui = get_wrui();
 
     WUApplication* app = wrui->application_create();
-    /*struct WUWindow* window =*/ wrui->window_create(0);
+    struct WUWindow* window = wrui->window_create(0);
+
+    wrui->window_funcs->set_paint_event(window, 0, paint_event); 
 
 	return wrui->application_funcs->run(app);
 }
