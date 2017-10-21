@@ -93,7 +93,7 @@ StaticLibrary {
     },
 }
 
-StaticLibrary {
+SharedLibrary {
     Name = "wrui_dimgui",
 
     Env = {
@@ -106,9 +106,15 @@ StaticLibrary {
     Sources = {
         get_src("src/dear_imgui/src")
     },
+
+    Libs = { { "stdc++"; Config = { "linux-*-*", "mac*-*-*" }, }, },
+
+    Frameworks = { "Cocoa", "OpenGL", "IOKit" },
+
+    Depends = { "glfw", "imgui" },
 }
 
-
+--[[
 StaticLibrary {
     Name = "wrui_qt",
 
@@ -162,8 +168,10 @@ Program {
     Frameworks = { "Cocoa", "QtCore", "QtWidgets", "QtGui" },
     Libs = { { "stdc++"; Config = { "linux-*-*", "mac*-*-*" }, }, },
 }
+--]]
 
+Default "wrui_dimgui"
 
 -- Default "button_dear_imgui"
-Default "button_qt"
+--Default "button_qt"
 
