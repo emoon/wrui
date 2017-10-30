@@ -2,6 +2,7 @@
 #include "../../include/wrui.h"
 #include <QMainWindow>
 
+/*
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static void add_dock_widget(GUMainWindow* win, GUDockingArea area, struct GUDockWidget* w) {
@@ -30,6 +31,7 @@ static void add_dock_widget(GUMainWindow* win, GUDockingArea area, struct GUDock
 struct GUMainWindowFuncs g_mainWindowFuncs = {
 	add_dock_widget,
 };
+*/
 
 
 

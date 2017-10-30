@@ -37,7 +37,7 @@ DefRule {
 	end,
 }
 
--- Used to send a list of header files 
+-- Used to send a list of header files
 
 local function MocGenerationMulti(sources)
  local result = {}
@@ -114,7 +114,6 @@ SharedLibrary {
     Depends = { "glfw", "imgui" },
 }
 
---[[
 StaticLibrary {
     Name = "wrui_qt",
 
@@ -133,15 +132,17 @@ StaticLibrary {
 
     Sources = {
 		MocGenerationMulti {
-			Glob { 
+			Glob {
 				Dir = "src/qt",
-				Extensions = { ".h" } 
-			}, 
+				Extensions = { ".h" }
+			},
 		},
 
         get_src("src/qt")
     },
 }
+
+--[[
 Program {
     Name = "button_dear_imgui",
     Sources = { "examples/button.c" },
@@ -174,6 +175,7 @@ Program {
 }
 
 Default "wrui_dimgui"
+Default "wrui_qt"
 Default "basic"
 
 -- Default "button_dear_imgui"

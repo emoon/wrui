@@ -4,6 +4,8 @@
 #include <QApplication>
 #include <QPushButton>
 
+#if 0
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static int connect(void* sender, const char* id, void* reciver, void* func) {
@@ -43,30 +45,32 @@ struct GUWidgetFuncs s_widgetFuncs = {
 	widget_set_size,
 };
 
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static int app_run(void* app) {
-	GUApplication* t = (GUApplication*)app;
-	QApplication* qt_app = (QApplication*)t->p;
+static int app_run(WUApplication* app) {
+	QApplication* qt_app = (QApplication*)app->handle;
 	return qt_app->exec();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct GUApplicationFuncs s_appFuncs = {
+struct WUApplicationFuncs s_appFuncs = {
 	app_run,
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static GUApplication* application_create() {
+static WUApplication* application_create() {
 	int argc = 0;
-	GUApplication* app = new GUApplication;
-	app->p = (void*) new QApplication(argc, 0);
+	WUApplication* app = new WUApplication;
+	app->handle = (WUInternalHandle*) new QApplication(argc, 0);
 
 	return app;
 }
+
+#if 0
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -89,22 +93,21 @@ static GUPushButton* push_button_create(const char* label, GUWidget* parent) {
 extern GUDockWidgetFuncs g_dockWidgetFuncs;
 extern GUMainWindowFuncs g_mainWindowFuncs;
 
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static Wrui s_wrui = {
-	WRUI_VERSION(0, 0, 1),
+    WRUI_VERSION,
 
 	// user facing
 
 	application_create,
 	0,
-	push_button_create,
+	0,
 
 	// funcs
 
-	&s_objFuncs,
-	&s_widgetFuncs,
-	&g_mainWindowFuncs,
 	0,
 	&s_appFuncs
 };
