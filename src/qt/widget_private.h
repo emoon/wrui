@@ -1,7 +1,7 @@
 #pragma once
 
-struct GUObject;
+//struct GUObject;
 
-void object_setup(GUObject* object, void* data);
-void widget_setup(GUWidget* widget, void* data);
+//void object_setup(GUObject* object, void* data);
+//void widget_setup(GUWidget* widget, void* data);
 

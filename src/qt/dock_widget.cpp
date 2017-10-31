@@ -3,6 +3,8 @@
 #include "widget_private.h"
 #include <QDockWidget>
 
+/*
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static struct GUDockWidget* create(struct GUWidget* parent) {
@@ -64,3 +66,5 @@ GUDockWidgetFuncs s_dockWidgetFuncs = {
 	set_widget,
 	widget,
 };
+
+*/

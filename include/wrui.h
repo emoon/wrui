@@ -6,136 +6,113 @@
 extern "C" {
 #endif
 
-#include "dock_widget.h"
-
-struct GUWidget;
-struct GUPushButton;
-struct GUMainWindow;
-struct GUDockWidget;
-
-#define GU_EVENT_RELEASED "2released()"
-
-#define GU_INTERNAL_WIDGET_TYPE(type) \
-typedef struct type { \
-	GUWidget* base; \
-} type
+typedef uint64_t WUHandle;
+struct Wrui;
+struct WUPainter;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef enum GUDockingArea {
-    GUDockingArea_Left = 0x1,
-    GUDockingArea_Right = 0x2,
-    GUDockingArea_Top = 0x4,
-    GUDockingArea_Bottom = 0x8,
-    GUDockingArea_All = 0xf,
-    GUDockingArea_None = 0,
-} GUDockingArea;
+typedef struct WUPos {
+	float x, y;
+} WUPos;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUObjectFuncs {
-	int (*connect)(void* sender, const char* id, void* reciver, void* func);
-} GUObjectFuncs;
+typedef struct WURect {
+	float x, y, width, height;
+} WURect;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUWidgetFuncs {
-	void (*set_size)(struct GUWidget* widget, int width, int height);
-} GUWidgetFuncs;
+typedef struct WUColor {
+	float r, g, b, a;
+} WUColor;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUMainWindowFuncs {
-	void (*add_dock_widget)(struct GUMainWindow* win, GUDockingArea area, struct GUDockWidget* widget);
-} GUMainWindowFuncs;
+typedef void (*WUPaintEvent)(const struct WUPainter* painter, void* user_data);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUPushButtonFuncs {
-	void (*set_default)(struct GUPushButton* button, int state);
-} GUPushButtonFuncs;
+typedef struct WUFont {
+	int (*set_size)(const struct WUFont* font, int size);
+	int (*set_font_from_memory)(struct WUFont* font, void* data, int size);
+	int (*set_font_from_filename)(struct WUFont* font, const char* filename, int len);
+} WUFont;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUApplicationFuncs {
-	int (*run)(void* p);
-} GUApplicationFuncs;
+typedef struct WUPainter {
+	WUFont* (*create_font)(void);
+	void (*draw_text)(const struct WUPainter* painter, WUPos pos, WUColor color, const char* text, int len, const WUFont* font);
+	void (*draw_rect)(const struct WUPainter* painter, WURect rect, WUColor color);
+} WUPainter;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUObject {
-	void* p;
-} GUObject;
+typedef struct WUWindowFuncs {
+    WUHandle (*create)(WUHandle parent);
+
+    // Window overrides
+	void (*set_paint_event)(WUHandle window, void* user_data, WUPaintEvent event);
+
+} WUWindowFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUWidget {
-	GUObject* object;
-} GUWidget;
+typedef struct WUWidgetFuncs {
+    WUHandle (*button_create)(WUHandle parent);
+
+    // Shared WUWidgetFuncs
+    void (*set_size)(WUHandle handle, int x, int y);
+} WUWidgetFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct GUDockWidget {
-	GUWidget* base;
-	void* priv;
-} GUDockWidget;
+typedef struct WUMainWindowFuncs {
+    WUHandle (*create)(void);
+} WUMainWindowFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-GU_INTERNAL_WIDGET_TYPE(GUWindow);
-GU_INTERNAL_WIDGET_TYPE(GUPushButton);
-GU_INTERNAL_WIDGET_TYPE(GUMainWindow);
+typedef struct WUApplicationFuncs {
+    WUHandle (*create)(void);
+    int (*run)(WUHandle handle);
+} WUApplicationFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct GUApplication {
-	void* p; // private data
-} GUApplication;
 
 typedef struct Wrui {
 	uint64_t api_version;
 
-	GUApplication* (*application_create)();
-	GUWindow* (*window_create)(GUWidget* parent);
-	GUPushButton* (*push_button_create)(const char* label, GUWidget* parent);
+    // Application functios
+	const WUApplicationFuncs* application_funcs;
 
-	GUObjectFuncs* object_funcs;
-	GUWidgetFuncs* widget_funcs;
-	GUMainWindowFuncs* main_window_funcs;
-	GUPushButtonFuncs* push_button_funcs;
-	GUApplicationFuncs* application_funcs;
+	// Window functions
+	const WUWindowFuncs* window_funcs;
+
+    // Main Window functions
+	const WUMainWindowFuncs* main_window_funcs;
+
+	// Widget Functinos
+	const WUWidgetFuncs* widget_funcs;
 
 } Wrui;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define WRUI_VERSION(major, minor, sub) ((((uint64_t)major) << 32) | (minor << 16) | (sub))
+#define WRUI_VERSION_CREATE(major, minor, sub) ((((uint64_t)major) << 32) | (minor << 16) | (sub))
+#define WRUI_VERSION WRUI_VERSION_CREATE(0, 0, 1)
 
-// Windowing
-
-#define gu_ctx_window_create(ctx) ctx->create_window()
-#define gu_window_create() gu_ctx_window_create(wrui_get())
-
-// Generic window stuff
-
-// #define gu_ctx_set_size(widget, x, y) wrui_get()->widget_funcs->set_size(widget->base, x, y)
-
-#define gu_set_size(widget, x, y) wrui_get()->widget_funcs->set_size(widget->base, x, y)
-#define gu_set_parent(widget, parent) widget->base->set_parent(widget->base, widget->base)
-#define gu_push_button_create(label, parent) wrui_get()->push_button_create(label, parent)
-
-// Connection API
-
-#define gu_connect(widget, id, data, func) wrui_get()->object_funcs->connect(widget->base->object, id, data, (void*)func)
-
-// Application
-
-#define gu_application_crate() wrui_get()->application_create()
-#define gu_application_run(app) wrui_get()->application_funcs->run(app)
+#ifdef _WIN32
+#define WRUI_EXPORT __declspec(dllexport)
+#else
+#define WRUI_EXPORT
+#endif
 
 // Should be the only exported symbol
 
-extern Wrui* wrui_get();
+extern Wrui* wrui_get(void);
 
 #ifdef __cplusplus
 }

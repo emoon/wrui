@@ -37,7 +37,7 @@ DefRule {
 	end,
 }
 
--- Used to send a list of header files 
+-- Used to send a list of header files
 
 local function MocGenerationMulti(sources)
  local result = {}
@@ -93,7 +93,7 @@ StaticLibrary {
     },
 }
 
-StaticLibrary {
+SharedLibrary {
     Name = "wrui_dimgui",
 
     Env = {
@@ -106,10 +106,15 @@ StaticLibrary {
     Sources = {
         get_src("src/dear_imgui/src")
     },
+
+    Libs = { { "stdc++"; Config = { "linux-*-*", "mac*-*-*" }, }, },
+
+    Frameworks = { "Cocoa", "OpenGL", "IOKit" },
+
+    Depends = { "glfw", "imgui" },
 }
 
-
-StaticLibrary {
+SharedLibrary {
     Name = "wrui_qt",
 
     Env = {
@@ -122,22 +127,27 @@ StaticLibrary {
             { "-F$(QT5)/lib"; Config = "macosx-*-*" },
         },
 
-        FRAMEWORKS = { "$(QT5)/lib/QtCore", "$(QT5)/lib/QtWidgets" },
+        SHLIBCOM = {
+            {  "-Wl,-rpath,$(QT5)/lib", "-F$(QT5)/lib", "-lstdc++", Config = "macosx-clang-*" },
+            {  "-Wl,-rpath,$(QT5)/lib", "-lstdc++", "-lm", Config = "linux-*-*" },
+        },
+
+        FRAMEWORKS = { "QtCore", "QtWidgets" },
     },
 
     Sources = {
 		MocGenerationMulti {
-			Glob { 
+			Glob {
 				Dir = "src/qt",
-				Extensions = { ".h" } 
-			}, 
+				Extensions = { ".h" }
+			},
 		},
 
         get_src("src/qt")
     },
 }
 
-
+--[[
 Program {
     Name = "button_dear_imgui",
     Sources = { "examples/button.c" },
@@ -162,8 +172,17 @@ Program {
     Frameworks = { "Cocoa", "QtCore", "QtWidgets", "QtGui" },
     Libs = { { "stdc++"; Config = { "linux-*-*", "mac*-*-*" }, }, },
 }
+--]]
 
+Program {
+    Name = "basic",
+    Sources = { "examples/basic.c" },
+}
+
+-- Default "wrui_dimgui"
+Default "wrui_qt"
+Default "basic"
 
 -- Default "button_dear_imgui"
-Default "button_qt"
+--Default "button_qt"
 
