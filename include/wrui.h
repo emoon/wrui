@@ -6,45 +6,9 @@
 extern "C" {
 #endif
 
-//struct WUWidget;
-//struct WUPushButton;
-//struct WUDockWidget;
-
-struct WUWindow;
-typedef void* WUInternalHandle;
+typedef uint64_t WUHandle;
 struct Wrui;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct WUApplication {
-	WUInternalHandle handle;
-} WUApplication;
-
-/*
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct WUWidgetFuncs {
-	void (*set_size)(WUInternalHandle widget, int width, int height);
-} WUWidgetFuncs;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct WUPushButtonFuncs {
-	void (*set_default)(struct WUPushButton* button, int state);
-} WUPushButtonFuncs;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct WUWidget {
-	WUInternalHandle handle;
-} WUWidget;
-*/
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct WUApplicationFuncs {
-	int (*run)(WUApplication* p);
-} WUApplicationFuncs;
+struct WUPainter;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,12 +30,12 @@ typedef struct WUColor {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef void (*PaintEvent)(void* user_data); 
+typedef void (*WUPaintEvent)(const struct WUPainter* painter, void* user_data);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct WUFont {
-	int (*set_size)(struct WUFont* font, int size);
+	int (*set_size)(const struct WUFont* font, int size);
 	int (*set_font_from_memory)(struct WUFont* font, void* data, int size);
 	int (*set_font_from_filename)(struct WUFont* font, const char* filename, int len);
 } WUFont;
@@ -80,34 +44,58 @@ typedef struct WUFont {
 
 typedef struct WUPainter {
 	WUFont* (*create_font)(void);
-	void (*draw_text)(struct WUPainter* painter, WUPos pos, WUColor color, const char* text, int len, const WUFont* font);
-	void (*draw_rect)(struct WUPainter* painter, WURect rect, WUColor color);
+	void (*draw_text)(const struct WUPainter* painter, WUPos pos, WUColor color, const char* text, int len, const WUFont* font);
+	void (*draw_rect)(const struct WUPainter* painter, WURect rect, WUColor color);
 } WUPainter;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct WUWindowFuncs {
-	void (*set_paint_event)(struct WUWindow* window, void* user_data, PaintEvent event); 
+    WUHandle (*create)(WUHandle parent);
+
+    // Window overrides
+	void (*set_paint_event)(WUHandle window, void* user_data, WUPaintEvent event);
+
 } WUWindowFuncs;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct WUWidgetFuncs {
+    WUHandle (*button_create)(WUHandle parent);
+
+    // Shared WUWidgetFuncs
+    void (*set_size)(WUHandle handle, int x, int y);
+} WUWidgetFuncs;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct WUMainWindowFuncs {
+    WUHandle (*create)(void);
+} WUMainWindowFuncs;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct WUApplicationFuncs {
+    WUHandle (*create)(void);
+    int (*run)(WUHandle handle);
+} WUApplicationFuncs;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct Wrui {
 	uint64_t api_version;
 
-	WUApplication* (*application_create)(void);
-	struct WUWindow* (*window_create)(WUInternalHandle parent);
-	WUPainter* (*painter_get)(void);
+    // Application functios
+	const WUApplicationFuncs* application_funcs;
 
-	//WUPushButton* (*push_button_create)(const char* label, WUInternalHandle parent);
+	// Window functions
+	const WUWindowFuncs* window_funcs;
 
-	//WUObjectFuncs* object_funcs;
-	//WUWidgetFuncs* widget_funcs;
-	//WUMainWindowFuncs* main_window_funcs;
-	//WUPushButtonFuncs* push_button_funcs;
+    // Main Window functions
+	const WUMainWindowFuncs* main_window_funcs;
 
-	WUWindowFuncs* window_funcs;
-	WUApplicationFuncs* application_funcs;
+	// Widget Functinos
+	const WUWidgetFuncs* widget_funcs;
 
 } Wrui;
 
@@ -119,7 +107,7 @@ typedef struct Wrui {
 #ifdef _WIN32
 #define WRUI_EXPORT __declspec(dllexport)
 #else
-#define WRUI_EXPORT 
+#define WRUI_EXPORT
 #endif
 
 // Should be the only exported symbol

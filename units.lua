@@ -114,7 +114,7 @@ SharedLibrary {
     Depends = { "glfw", "imgui" },
 }
 
-StaticLibrary {
+SharedLibrary {
     Name = "wrui_qt",
 
     Env = {
@@ -127,7 +127,12 @@ StaticLibrary {
             { "-F$(QT5)/lib"; Config = "macosx-*-*" },
         },
 
-        FRAMEWORKS = { "$(QT5)/lib/QtCore", "$(QT5)/lib/QtWidgets" },
+        SHLIBCOM = {
+            {  "-Wl,-rpath,$(QT5)/lib", "-F$(QT5)/lib", "-lstdc++", Config = "macosx-clang-*" },
+            {  "-Wl,-rpath,$(QT5)/lib", "-lstdc++", "-lm", Config = "linux-*-*" },
+        },
+
+        FRAMEWORKS = { "QtCore", "QtWidgets" },
     },
 
     Sources = {
@@ -174,7 +179,7 @@ Program {
     Sources = { "examples/basic.c" },
 }
 
-Default "wrui_dimgui"
+-- Default "wrui_dimgui"
 Default "wrui_qt"
 Default "basic"
 
