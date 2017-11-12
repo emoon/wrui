@@ -36,6 +36,8 @@ local macosx = {
             { "-O3"; Config = "*-*-release" },
         },
         CXXOPTS = {
+            { "-O0", "-g"; Config = "*-*-debug" },
+            { "-O3"; Config = "*-*-release" },
             "-std=c++11", -- "-Weverything", "-I.", "-Werror"
         },
     },
@@ -54,7 +56,7 @@ local linux = {
 
 Build {
 	Passes = {
-		CodeGeneration = { Name="Generate sources", BuildOrder = 1 },
+		CodeGeneration = { Name="CodeGeneration", BuildOrder = 1 },
 	},
 
     Configs = {

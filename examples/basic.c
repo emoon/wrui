@@ -17,19 +17,14 @@ typedef struct Application {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*
-static void paint_event(void* user_data) {
+static void paint_event(const struct WUPainter* painter, void* user_data) {
 	(void)user_data;
-	Application* app = (Application*)user_data;
-
-	WUPainter* painter = app->wrui->painter_get();
-
 	WUPos pos = { 10.0f, 10.0f };
 
-	//WURect rect = { 10.0f, 10.0f, 200.0f, 200.0f };
+	WURect rect = { 10.0f, 10.0f, 200.0f, 200.0f };
 	WUColor color = { 1.0f, 1.0f, 0.0f, 1.0f };
 
-	//painter->draw_rect(painter, rect, color);
+	painter->draw_rect(painter, rect, color);
 	//painter->draw_rect(painter, rect, color);
 
 	const char* text = "test text";
@@ -38,7 +33,6 @@ static void paint_event(void* user_data) {
 
 	printf("update\n");
 }
-*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,9 +58,10 @@ int main() {
     user_app->wrui = wrui;
 
     WUHandle app = wrui->application_funcs->create();
-    wrui->main_window_funcs->create();
-    //struct WUWindow* window = wrui->window_create(0);
-    //wrui->window_funcs->set_paint_event(window, user_app, paint_event);
+
+    //wrui->main_window_funcs->create();
+    WUHandle window = wrui->window_funcs->create(0);
+    wrui->window_funcs->set_paint_event(window, user_app, paint_event);
 
 	return wrui->application_funcs->run(app);
 }
