@@ -149,8 +149,8 @@ public:
         }
     }
 
-    WUPaintEvent m_paint_event;
-    void* m_paint_user_data;
+    WUPaintEvent m_paint_event = nullptr;
+    void* m_paint_user_data = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
