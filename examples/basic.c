@@ -21,10 +21,10 @@ static void paint_event(const struct WUPainter* painter, void* user_data) {
 	(void)user_data;
 	WUPos pos = { 10.0f, 10.0f };
 
-	WURect rect = { 10.0f, 10.0f, 200.0f, 200.0f };
-	WUColor color = { 1.0f, 1.0f, 0.0f, 1.0f };
+	//WURect rect = { 10.0f, 10.0f, 200.0f, 200.0f };
+	WUColor color = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-	painter->draw_rect(painter, rect, color);
+	//painter->draw_rect(painter, rect, color);
 	//painter->draw_rect(painter, rect, color);
 
 	const char* text = "test text";
